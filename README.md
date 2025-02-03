@@ -1,2 +1,4 @@
 # YnEBS
-YnEBS - Yeni Nesil Eğitim Bilgilendirme Sistemi - TÜBİTAK 2204-B Yarışma Projesi - Ege Güler
+YnEBS - Yeni Nesil Eğitim Bilgilendirme Sistemi
+TÜBİTAK 2204-B Yarışma Projesi
+**Ege Güler**'e Ait Projenin Kaynak Kodlarıdır
