@@ -15,9 +15,13 @@ Platformu kullanmak için bir google hesabına ihtiyacınız var. Kesinlikle KEN
 # Platform-İçi Hesap Bilgileri
 ___Öğretmen Hesabı (Google)____
 Mail: ynebsogretmen@gmail.com
+
 Şifre: YnEBS-2025
+
 TC Kimik No: (İhtiyaç yok)
 ___Öğrenci Hesabı (Google)_____
 Mail: ynebsogrenci@gmail.com
+
 Şifre: YnEBS-2025
+
 TC Kimlik No: 22049171848
