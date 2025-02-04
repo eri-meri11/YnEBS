@@ -7,6 +7,7 @@ Aşağıdaki adresten platforma giriş yapabilirsiniz.
 |||||||
 
 vvvvvvv
+
 https://ynebs-egeguler.web.app/
 # Platform Kullanımı
 Platformu kullanmak için bir google hesabına ihtiyacınız var. Kesinlikle KENDİ GOOGLE HESABINIZLA GİRİŞ YAPMAYIN.
