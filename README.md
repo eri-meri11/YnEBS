@@ -4,7 +4,9 @@ TÜBİTAK 2204-B Yarışma Projesi
 # Platforma Giriş
 Aşağıdaki adresten platforma giriş yapabilirsiniz.
 |||||||
+
 vvvvvvv
+https://ynebs-egeguler.web.app/
 # Platform Kullanımı
 Platformu kullanmak için bir google hesabına ihtiyacınız var. Kesinlikle KENDİ GOOGLE HESABINIZLA GİRİŞ YAPMAYIN.
 Öğrenciye bir kez not atandıktan sonra not bir daha değiştirilemez. Yanlışlıkla not ataması yaptıysanız gulerege.tr@gmail.com adresine mail atınız.
