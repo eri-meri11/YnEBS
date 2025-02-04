@@ -27,4 +27,4 @@ Mail: ynebsogrenci@gmail.com
 
 Şifre: YnEBS-2025
 
-TC Kimlik No: 22049171848
+TC Kimlik No: 12345678910
