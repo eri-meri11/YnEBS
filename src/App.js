@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { loginWithGoogle, logout, checkAuthState } from "./auth";
 import { db } from "./firebase";
-import { doc, getDoc } from "firebase/firestore";
-import { uploadToIPFS, fetchFromIPFS } from "./storage"; // Pinata ile IPFS yükleme ve okuma
+import { doc, getDoc, setDoc } from "firebase/firestore";
+import { uploadToIPFS, fetchFromIPFS } from "./storage";
 
 const App = () => {
   const [user, setUser] = useState(null);
@@ -14,45 +14,96 @@ const App = () => {
 
   useEffect(() => {
     checkAuthState(async (loggedUser) => {
-      setUser(loggedUser);
       if (loggedUser) {
+        setUser(loggedUser);
         await getUserRole(loggedUser.uid);
+      } else {
+        setUser(null);
+        setRole(null);
       }
     });
   }, []);
 
+  // Kullanıcının rolünü ve TC kimlik numarasını Firestore'dan al
   const getUserRole = async (uid) => {
-    const userRef = doc(db, "users", uid);
+    const userRef = doc(db, "students", uid);
     const userSnap = await getDoc(userRef);
+
     if (userSnap.exists()) {
-      setRole(userSnap.data().role);
+      const userData = userSnap.data();
+      setRole(userData.role);
+      setTcKimlik(userData.tcKimlik || "");
     } else {
-      setRole("student");
+      setRole("student"); // Varsayılan olarak öğrenci
+      setTcKimlik("");
+      await setDoc(userRef, { role: "student", tcKimlik: "" });
     }
   };
 
+  // Öğretmen not eklediğinde veriyi IPFS'e yükleyip Firestore'a hash kaydeder
   const handleAddGrade = async () => {
     if (!user) return alert("Önce giriş yapın!");
+    if (role !== "teacher") return alert("Sadece öğretmenler not ekleyebilir!");
 
-    const data = { tcKimlik, notlar: notlar.split(",") }; // Notları listeye çevir
+    const data = { tcKimlik, notlar: notlar.split(",") };
     const ipfsHash = await uploadToIPFS(data);
 
     if (ipfsHash) {
       setHash(ipfsHash);
+      console.log("IPFS Hash Kaydedildi:", ipfsHash);
+
+      // Firestore'a TC Kimlik ile hash kaydet
+      const gradeRef = doc(db, "grades", tcKimlik);
+      await setDoc(gradeRef, { ipfsHash });
+
       alert(`Veriler başarıyla IPFS'e yüklendi! Hash: ${ipfsHash}`);
     } else {
       alert("Yükleme başarısız oldu!");
     }
   };
 
+  // Öğrenci giriş yaptığında kendi TC kimlik numarasıyla notlarını çeker
   const handleCheckGrade = async () => {
-    if (!hash) return alert("Önce bir hash girin!");
-    
-    const data = await fetchFromIPFS(hash);
-    if (data && data.tcKimlik === tcKimlik) {
-      setOgrenciNot(data.notlar.join(", "));
-    } else {
-      alert("Veri bulunamadı veya hatalı TC Kimlik No!");
+    if (!user) {
+      alert("Önce giriş yapın!");
+      return;
+    }
+
+    try {
+      // Firestore'dan UID ile TC Kimlik No'yu al
+      const studentRef = doc(db, "students", user.uid);
+      const studentSnap = await getDoc(studentRef);
+
+      if (!studentSnap.exists()) {
+        alert("Öğrenci bilgileri bulunamadı!");
+        return;
+      }
+
+      const studentData = studentSnap.data();
+      const tcKimlik = studentData.tcKimlik;
+
+      // Firestore'dan TC Kimlik ile Hash'i çek
+      const gradeRef = doc(db, "grades", tcKimlik);
+      const gradeSnap = await getDoc(gradeRef);
+
+      if (!gradeSnap.exists()) {
+        alert("Bu TC Kimlik No'ya ait veri bulunamadı!");
+        return;
+      }
+
+      const hash = gradeSnap.data().ipfsHash;
+      setHash(hash);
+
+      // IPFS'ten veriyi çek
+      const data = await fetchFromIPFS(hash);
+      if (data) {
+        setOgrenciNot(data.notlar.join(", "));
+      } else {
+        alert("Veri alınamadı!");
+      }
+    } catch (error) {
+      console.error("Notları alma hatası:", error);
+      alert("Bir hata oluştu, lütfen tekrar deneyin.");
     }
   };
 
@@ -82,17 +133,13 @@ const App = () => {
             </div>
           )}
 
-          <div>
-            <h3>Notları Gör</h3>
-            <input
-              type="text"
-              placeholder="TC Kimlik No"
-              value={tcKimlik}
-              onChange={(e) => setTcKimlik(e.target.value)}
-            />
-            <button onClick={handleCheckGrade}>Notları Göster</button>
-            {ogrenciNot && <p>Notlar: {ogrenciNot}</p>}
-          </div>
+          {role === "student" && (
+            <div>
+              <h3>Notları Gör</h3>
+              <button onClick={handleCheckGrade}>Notları Göster</button>
+              {ogrenciNot && <p>Notlar: {ogrenciNot}</p>}
+            </div>
+          )}
         </>
       ) : (
         <button onClick={loginWithGoogle}>Google ile Giriş Yap</button>

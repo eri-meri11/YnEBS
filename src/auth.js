@@ -10,11 +10,11 @@ export const loginWithGoogle = async () => {
     const result = await signInWithPopup(auth, provider);
     const user = result.user;
 
-    const userRef = doc(db, "users", user.uid);
+    const userRef = doc(db, "students", user.uid);
     const userSnap = await getDoc(userRef);
-    
+
     if (!userSnap.exists()) {
-      await setDoc(userRef, { role: "student" });
+      await setDoc(userRef, { role: "student", tcKimlik: "" });
     }
   } catch (error) {
     console.error("Giriş hatası:", error);
