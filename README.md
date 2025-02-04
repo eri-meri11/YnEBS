@@ -19,6 +19,7 @@ Mail: ynebsogretmen@gmail.com
 Şifre: YnEBS-2025
 
 TC Kimik No: (İhtiyaç yok)
+
 ___Öğrenci Hesabı (Google)_____
 Mail: ynebsogrenci@gmail.com
 
